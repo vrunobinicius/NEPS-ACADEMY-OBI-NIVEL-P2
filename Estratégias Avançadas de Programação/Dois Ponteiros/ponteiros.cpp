@@ -1,3 +1,5 @@
+// https://neps.academy/br/course/estrategias-avancadas-de-programacao/lesson/dois-ponteiros
+
 #include <bits/stdc++.h>
 
 using namespace std;
