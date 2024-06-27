@@ -18,7 +18,7 @@ int main(int argc, char const *argv[])
         dp[i] = max(n, dp[i - 1] + n);
     }
 
-    int ans = 0;
+    int ans = -100;
     for (int i = 0; i < N; i++)
         ans = max(ans, dp[i]);
 
