@@ -11,6 +11,8 @@ public:
     bool is_undirected;
     vector<int> *adj;
 
+    bool *visited = NULL;
+
     Graph(int n, bool is_undirected = true)
     {
         this->n = n;
@@ -26,6 +28,38 @@ public:
             this->adj[v].push_back(u);
         }
     }
+
+    int count_components()
+    {
+        delete this->visited;
+        this->visited = new bool[this->n];
+
+        int qtd_components = 0;
+
+        for (int i = 0; i < n; i++)
+        {
+            if (!this->visited[i])
+            {
+                this->dfs(i);
+                qtd_components++;
+            }
+        }
+
+        return qtd_components;
+    }
+
+    void dfs(int current)
+    {
+        this->visited[current] = true;
+        for (unsigned int i = 0; i < adj[current].size(); i++)
+        {
+            int neighbour = this->adj[current][i];
+            if (!visited[neighbour])
+            {
+                dfs(neighbour);
+            }
+        }
+    }
 };
 
 int main(int argc, char const *argv[])
@@ -34,17 +68,19 @@ int main(int argc, char const *argv[])
     cin >> n >> m;
     Graph graph(n);
 
-    for (int i = 1; i <= m; i++)
+    for (int i = 0; i < m; i++)
     {
         int u, v;
         cin >> u >> v;
         graph.add_edge(u, v);
     }
 
-    for (int i = 1; i < n; i++)
+    cout << "Numero de componentes: " << graph.count_components() << "\n";
+
+    for (int i = 0; i < n; i++)
     {
         cout << i << ": ";
-        for (int j = 0; j < graph.adj[i].size(); j++)
+        for (unsigned int j = 0; j < graph.adj[i].size(); j++)
         {
             cout << graph.adj[i][j] << " ";
         }
