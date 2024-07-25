@@ -2,10 +2,23 @@
 
 using namespace std;
 
-#define MAXOP 2
-#define MAXN 1010
+#define MAXN 26
 
-int dp[MAXN][MAXN];
+// int dp[MAXN][MAXN];
+
+void edit_distance(int M[][MAXN], string word, string dictWord)
+{
+    for (unsigned int i = 1; i <= word.size(); i++)
+    {
+        for (unsigned int j = 1; j <= dictWord.size(); j++)
+        {
+            M[i][j] = min(min(M[i - 1][j] + 1,
+                              (word[i - 1] == dictWord[j - 1] ? M[i - 1][j - 1] : M[i - 1][j - 1] + 1)),
+                          M[i][j - 1] + 1);
+        }
+    }
+}
+
 int main(int argc, char const *argv[])
 {
 
@@ -15,55 +28,60 @@ int main(int argc, char const *argv[])
 
     vector<string> dictionary(N);
     vector<string> word(M);
-    vector<vector<string>> answer;
+    vector<vector<string>> answer[N * M];
 
     for (int i = 0; i < N; i++)
     {
         cin >> dictionary[i];
     }
-
     for (int i = 0; i < M; i++)
     {
         cin >> word[i];
     }
 
-    for (int a = 0; a < M; a++)
+    int matriz[MAXN][MAXN];
+    for (int i = 0; i < N; i++)
     {
-        answer.push_back(vector<string>());
-        for (int b = 0; b < N; b++)
+        answer[i].push_back(vector<string>());
+        // cout << dictionary[i] << ">\n\n";
+        for (int j = 0; j < M; j++)
         {
-            memset(dp, 0, sizeof(dp));
-            for (int i = 1; i <= word[a].length(); i++)
+            memset(matriz, 0, sizeof matriz);
+            for (int l = 1; l <= word[j].size(); l++)
             {
-                for (int j = 1; j <= dictionary[b].length(); j++)
-                {
-                    if (word[a][i - 1] != dictionary[b][j - 1])
-                    {
-                        dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
-                    }
-                    else
-                    {
-                        dp[i][j] = dp[i - 1][j - 1] + 1;
-                    }
-                }
+                matriz[l][0] = l;
             }
-            if ((word[a].length() - dp[word[a].length()][dictionary[b].length()]) <= 2 &&
-                (dictionary[b].length() - dp[word[a].length()][dictionary[b].length()]) <= 2
-                /*&& (max(word[a].length(), dictionary[b].length()) - min(dictionary[b].length(), word[a].length()) > 1)*/)
+            for (int l = 1; l <= dictionary[i].size(); l++)
             {
-                answer[a].push_back(dictionary[b]);
+                matriz[0][l] = l;
             }
+
+            edit_distance(matriz, word[i], dictionary[j]);
+            if (matriz[word[i].size() - 1][dictionary[j].size() - 1] <= 2 && matriz[word[i].size() - 1][dictionary[j].size() - 1] >= 1)
+            {
+                cout << dictionary[j] << " ";
+            }
+            // cout << word[j] << ":\n";
+            // for (int a = 0; a <= word[j].size(); a++)
+            // {
+            //     for (int c = 0; c <= dictionary[i].size(); c++)
+            //     {
+            //         cout << matriz[a][c] << "| ";
+            //     }
+            //     cout << "\n";
+            // }
+            // cout << "\n\n";
         }
+        // cout << "\n\n";
     }
 
-    for (auto s : answer)
-    {
-        for (auto sw : s)
-        {
-            cout << sw << " ";
-        }
-        cout << "\n";
-    }
-
+    // for (auto s : answer)
+    // {
+    //     for (auto sw : s)
+    //     {
+    //         cout << sw << " ";
+    //     }
+    //     cout << "\n";
+    // }
     return 0;
 }
